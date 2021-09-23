@@ -18,11 +18,11 @@ jobs:
         pip install -r requirements.txt
     
     - name: Run migrations
-        run: auth-tp/auth/manage.py migrate
+        run: auth-tp/manage.py migrate
 
       # run: python hotelsystem/manage.py migrate 
     - name: Run tests
-      run: python3 auth/manage.py test
+      run: python3 auth-tp/manage.py test
 
 # Added snippets
     - name: Run Tests
