@@ -1,0 +1,38 @@
+name: Django Tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: setup python 3.9
+      uses: actions/setup-python@v1
+      with:
+        python_version: 3.9
+    - name: install dependencies
+      run:  |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run migrations
+        run: auth-tp/auth/manage.py migrate
+
+      # run: python hotelsystem/manage.py migrate 
+    - name: Run tests
+      run: python3 auth/manage.py test
+
+# Added snippets
+    - name: Run Tests
+      run: |
+        python manage.py test
+    - name: Deploy to Heroku
+      env:
+        HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+        HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+      if: github.ref == 'refs/heads/main' && job.status == 'success'
+      run: |
+        git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
+        git push heroku HEAD:main -f
